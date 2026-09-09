@@ -9,14 +9,14 @@ public class Invoice : AuditableEntity
     public IReadOnlyList<InvoiceLineItem> InvoiceLineItems => _lineItems; // same as the AsReadOnly()
     public WorkOrder WorkOrder { get; private set; }
     public Guid WorkOrderId { get; private set; }
-    public DateTimeOffset PaidAtUtc { get; set; }
-    public DateTimeOffset IssuedAtUtc { get; set; }
+    public DateTimeOffset PaidAtUtc { get; private set; }
+    public DateTimeOffset IssuedAtUtc { get; private set; }
 
     public decimal SubTotal => _lineItems.Sum(li => li.LineTotal);
-    public InvoiceStatus Status { get; set; }
+    public InvoiceStatus Status { get; private set; }
     public decimal TaxAmount { get; private set; }
     public decimal DiscountAmount { get; private set; }
-    public decimal Total => (SubTotal - DiscountAmount + TaxAmount);
+    public decimal Total => SubTotal - DiscountAmount + TaxAmount;
 #pragma warning disable CS8618
     private Invoice() { }
 
@@ -37,6 +37,7 @@ public class Invoice : AuditableEntity
         TaxAmount = taxAmount;
         DiscountAmount = discountAmount;
         _lineItems = lineItems;
+        Status = InvoiceStatus.UnPaid;
     }
 
     public static Result<Invoice> Create(
@@ -64,7 +65,7 @@ public class Invoice : AuditableEntity
             timeProvider.GetUtcNow(),
             taxAmount,
             discountAmount,
-            lineItems
+            [.. lineItems]
         );
     }
 

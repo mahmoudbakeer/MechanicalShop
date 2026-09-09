@@ -49,6 +49,8 @@ public static class ApplicationErrors
 
     public static Error InvalidRefreshToken =>
         Error.Validation("ApplicationErrors_RefreshToken_Invalid.", "Refresh token invalid.");
+    public static Error UserClaimsInvalid =>
+        Error.Validation("ApplicationErrors_Claims_Invalid.", "User Claims invalid.");
     public static Error ExpiredAccessTokenInvalid =>
         Error.Conflict(
             "ApplicationErrors_ExpiredAccessToken_Invalid.",

@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using MechanicShop.Domain.Common;
 using MechanicShop.Domain.Common.Results;
@@ -16,7 +14,6 @@ public class Customer : AuditableEntity
     public IEnumerable<Vehicle> Vehicles => _vehicles.AsReadOnly(); // so no one can recover the List<> and clear it or modify it.
 #pragma warning disable CS8618
     private Customer() { }
-#pragma warning disable CS8618
 
     private Customer(Guid id, string name, string email, string phonenumber, List<Vehicle> vehicles)
         : base(id)
@@ -48,7 +45,7 @@ public class Customer : AuditableEntity
             return CustomerError.EmailRequired;
         if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             return CustomerError.EmailInValid;
-        return new Customer(id, name, email, phonenumber, vehicles);
+        return new Customer(id, name, email, phonenumber, [.. vehicles]);
     }
 
     public Result<Updated> Update(string name, string email, string phonenumber)
@@ -100,4 +97,3 @@ public class Customer : AuditableEntity
         return Result.Updated;
     }
 }
-

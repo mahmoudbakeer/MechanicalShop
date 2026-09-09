@@ -13,12 +13,12 @@ public class WorkOrder : AuditableEntity
 {
     private readonly List<RepairTask> _repairTasks = [];
     public IEnumerable<RepairTask> RepairTasks => _repairTasks.AsReadOnly();
-    public Employee Employee { get; set; }
+    public Employee Employee { get; private set; }
     public Guid EmployeeId { get; private set; }
-    public Vehicle Vehicle { get; set; }
+    public Vehicle Vehicle { get; private set; }
     public Guid VehicleId { get; private set; }
-    public Invoice? Invoice { get; set; }
-    public Guid InvoiceId { get; private set; }
+    public Invoice? Invoice { get; private set; }
+    public Guid? InvoiceId { get; private set; }
     public DateTimeOffset StartedAtUtc { get; private set; }
     public DateTimeOffset EndAtUtc { get; private set; }
     public Spot Spot { get; private set; }
@@ -72,24 +72,31 @@ public class WorkOrder : AuditableEntity
             return WorkOrderError.VehicleIdRequired;
         if (!System.Enum.IsDefined(spot))
             return WorkOrderError.InvalidSpot;
-        if (startAt.Day < Now.Day)
+        if (startAt < Now)
             return WorkOrderError.InvalidStartTime;
         if (startAt >= endAt)
             return WorkOrderError.InvalidEndTime;
         if (repairTasks is null || repairTasks.Count == 0)
             return WorkOrderError.RepairTasksRequired;
 
-        return new WorkOrder(id, employeeId, startAt, endAt, vehicleId, spot, repairTasks);
+        List<RepairTask> tasks = [.. repairTasks];
+        return new WorkOrder(id, employeeId, startAt, endAt, vehicleId, spot, tasks);
     }
 
-    public bool IsEditable => State == WorkOrderState.Scheduled;
+    public bool IsEditable =>
+        State
+            is not (
+                WorkOrderState.Completed
+                or WorkOrderState.Cancelled
+                or WorkOrderState.InProgress
+            );
 
     public Result<Updated> UpdateTiming(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         if (!IsEditable)
-            return WorkOrderError.TimingReadOnly(Id, State);
-        if (startAt >= endAt)
             return WorkOrderError.ReadOnly;
+        if (startAt >= endAt)
+            return WorkOrderError.TimingReadOnly(Id, State);
         StartedAtUtc = startAt;
         EndAtUtc = endAt;
 
@@ -121,24 +128,17 @@ public class WorkOrder : AuditableEntity
 
     public bool CanTransferTo(WorkOrderState newState)
     {
-        if (!IsEditable)
-            return false;
-        else
+        return (State, newState) switch
         {
-            return (State, newState) switch
-            {
-                (WorkOrderState.Scheduled, WorkOrderState.InProgress) => true,
-                (WorkOrderState.InProgress, WorkOrderState.Completed) => true,
-                (_, WorkOrderState.Cancelled) when State != WorkOrderState.InProgress => true,
-                _ => false,
-            };
-        }
+            (WorkOrderState.Scheduled, WorkOrderState.InProgress) => true,
+            (WorkOrderState.InProgress, WorkOrderState.Completed) => true,
+            (_, WorkOrderState.Cancelled) when State != WorkOrderState.InProgress => true,
+            _ => false,
+        };
     }
 
     public Result<Success> UpdateState(WorkOrderState newState)
     {
-        if (!IsEditable)
-            return WorkOrderError.StateTransformationNotAllowed(StartedAtUtc);
         if (!CanTransferTo(newState))
             return WorkOrderError.InvalidStateTransformation(State, newState);
 
