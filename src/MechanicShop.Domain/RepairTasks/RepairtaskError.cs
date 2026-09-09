@@ -13,4 +13,5 @@ public static class RepairTaskError
     public static Error PartsRequired => Error.Validation("RepairTask_Parts_Required.", "RepairTask Parts cannot be empty or null.");
     public static Error InUse => Error.Validation("RepairTask_InUse.", "Cannot Delete RepairTask that is in Use.");
     public static Error DuplicateName => Error.Validation("RepairTask_Parts_DuplicateName.", "There is already part has the same name in the parts of the RepairTask.");
+    public static Error RepairTaskAlreadyExist => Error.Validation("RepairTask_Already_Exist.", "RepairTask with the same name already exist.");
 }

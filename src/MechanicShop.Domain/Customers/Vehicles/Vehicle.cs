@@ -2,8 +2,8 @@ using System.Security.Cryptography.X509Certificates;
 using MechanicShop.Domain.Common;
 using MechanicShop.Domain.Common.Results;
 using MechanicShop.Domain.Customers;
-namespace MechanicShop.Domain.Customers.Vehicles;
 
+namespace MechanicShop.Domain.Customers.Vehicles;
 
 public class Vehicle : AuditableEntity
 {
@@ -18,12 +18,12 @@ public class Vehicle : AuditableEntity
     public string VehicleInfo => $"{Make} | {Model} | {Year}";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    private Vehicle()
-    { }
+    private Vehicle() { }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    private Vehicle(Guid id, string make, string licenseplate, string model, int year) : base(id)
+    private Vehicle(Guid id, string make, string licenseplate, string model, int year)
+        : base(id)
     {
         Make = make;
         Model = model;
@@ -31,10 +31,16 @@ public class Vehicle : AuditableEntity
         LicensePlate = licenseplate;
     }
 
-
-    public static Result<Vehicle> Create(Guid id, string make, string licenseplate, string model, int year)
+    public static Result<Vehicle> Create(
+        Guid id,
+        string make,
+        string licenseplate,
+        string model,
+        int year
+    )
     {
-        if (Guid.Empty == id) return VehicleError.VehicleIdRequired;
+        if (Guid.Empty == id)
+            return VehicleError.VehicleIdRequired;
 
         if (string.IsNullOrEmpty(make))
         {
@@ -54,6 +60,7 @@ public class Vehicle : AuditableEntity
         }
         return new Vehicle(id, make, licenseplate, model, year);
     }
+
     public Result<Updated> Update(string make, string licenseplate, string model, int year)
     {
         if (string.IsNullOrEmpty(make))
@@ -79,3 +86,4 @@ public class Vehicle : AuditableEntity
         return Result.Updated;
     }
 }
+

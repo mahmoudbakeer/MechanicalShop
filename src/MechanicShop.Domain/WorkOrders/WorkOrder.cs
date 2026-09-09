@@ -1,11 +1,11 @@
 using MechanicShop.Domain.Common;
-using MechanicShop.Domain.Common.Events;
 using MechanicShop.Domain.Common.Results;
 using MechanicShop.Domain.Customers.Vehicles;
 using MechanicShop.Domain.Employees;
 using MechanicShop.Domain.RepairTasks;
 using MechanicShop.Domain.WorkOrders.Billing;
 using MechanicShop.Domain.WorkOrders.Enum;
+using MechanicShop.Domain.WorkOrders.Events;
 
 namespace MechanicShop.Domain.WorkOrders;
 
@@ -13,27 +13,30 @@ public class WorkOrder : AuditableEntity
 {
     private readonly List<RepairTask> _repairTasks = [];
     public IEnumerable<RepairTask> RepairTasks => _repairTasks.AsReadOnly();
-    public Employee? Employee { get; set; }
+    public Employee Employee { get; set; }
     public Guid EmployeeId { get; private set; }
-    public Vehicle? Vehicle { get; set; }
+    public Vehicle Vehicle { get; set; }
     public Guid VehicleId { get; private set; }
     public Invoice? Invoice { get; set; }
     public Guid InvoiceId { get; private set; }
-    public DateTime StartedAtUtc { get; private set; }
-    public DateTime EndAtUtc { get; private set; }
+    public DateTimeOffset StartedAtUtc { get; private set; }
+    public DateTimeOffset EndAtUtc { get; private set; }
     public Spot Spot { get; private set; }
     public WorkOrderState State { get; private set; }
-    public decimal? TotalPartsCost => _repairTasks.SelectMany(rp => rp.Parts).Sum(p => p.Cost);
-    public decimal? TotalLaborCost => _repairTasks.Sum(rp => rp.LaborCost);
-    public decimal? Total => (TotalPartsCost ?? 0) + (TotalLaborCost ?? 0);
+    public decimal TotalPartsCost => _repairTasks.SelectMany(rp => rp.Parts).Sum(p => p.Cost);
+    public decimal TotalLaborCost => _repairTasks.Sum(rp => rp.LaborCost);
+    public decimal Total => TotalPartsCost + TotalLaborCost;
+    public decimal? Discount { get; private set; }
 
+#pragma warning disable CS8618
     private WorkOrder() { }
+#pragma warning disable CS8618
 
     private WorkOrder(
         Guid id,
         Guid employeeId,
-        DateTime startAt,
-        DateTime endAt,
+        DateTimeOffset startAt,
+        DateTimeOffset endAt,
         Guid vehicleId,
         Spot spot,
         List<RepairTask> repairTasks
@@ -45,17 +48,20 @@ public class WorkOrder : AuditableEntity
         EndAtUtc = endAt;
         VehicleId = vehicleId;
         _repairTasks = repairTasks;
+        Spot = spot;
+
         State = WorkOrderState.Scheduled;
     }
 
     public static Result<WorkOrder> Create(
         Guid id,
         Guid employeeId,
-        DateTime startAt,
-        DateTime endAt,
+        DateTimeOffset startAt,
+        DateTimeOffset endAt,
         Guid vehicleId,
         Spot spot,
-        List<RepairTask> repairTasks
+        List<RepairTask> repairTasks,
+        DateTimeOffset Now
     )
     {
         if (Guid.Empty == id)
@@ -66,7 +72,7 @@ public class WorkOrder : AuditableEntity
             return WorkOrderError.VehicleIdRequired;
         if (!System.Enum.IsDefined(spot))
             return WorkOrderError.InvalidSpot;
-        if (startAt.Day < DateTime.UtcNow.Day)
+        if (startAt.Day < Now.Day)
             return WorkOrderError.InvalidStartTime;
         if (startAt >= endAt)
             return WorkOrderError.InvalidEndTime;
@@ -78,12 +84,10 @@ public class WorkOrder : AuditableEntity
 
     public bool IsEditable => State == WorkOrderState.Scheduled;
 
-    public Result<Updated> UpdateTiming(DateTime startAt, DateTime endAt)
+    public Result<Updated> UpdateTiming(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         if (!IsEditable)
             return WorkOrderError.TimingReadOnly(Id, State);
-        if (startAt.Day < DateTime.UtcNow.Day)
-            return WorkOrderError.InvalidStartTime;
         if (startAt >= endAt)
             return WorkOrderError.ReadOnly;
         StartedAtUtc = startAt;

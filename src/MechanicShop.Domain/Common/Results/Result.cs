@@ -14,6 +14,11 @@ public static class Result
     public static Created Created => default;
     public static Updated Updated => default;
     public static Deleted Deleted => default;
+
+    public static IResult<T> Failure<T>(object error)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public sealed class Result<TValue> : IResult<TValue>
