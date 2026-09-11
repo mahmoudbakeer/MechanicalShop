@@ -211,7 +211,7 @@ public sealed class InvoicePdfGenerator : IInvoicePdfGenerator
 
                         var isEvenRow = false;
 
-                        foreach (var item in invoice.InvoiceLineItems)
+                        foreach (var item in invoice.LineItems)
                         {
                             var backgroundColor = isEvenRow ? Surface : White;
 

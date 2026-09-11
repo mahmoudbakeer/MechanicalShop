@@ -20,7 +20,7 @@ public static class BillingMapper
             DiscountAmount = invoice.DiscountAmount,
             Total = invoice.Total,
             PaymentStatus = invoice.Status.ToString(),
-            Items = [.. invoice.InvoiceLineItems.Select(x => x.ToDto())],
+            Items = [.. invoice.LineItems.Select(x => x.ToDto())],
         };
     }
 

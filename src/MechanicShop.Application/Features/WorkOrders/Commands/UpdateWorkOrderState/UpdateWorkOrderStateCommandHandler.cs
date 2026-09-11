@@ -14,11 +14,13 @@ namespace MechanicShop.Application.Features.WorkOrders.Commands.UpdateWorkOrderS
 public class UpdateWorkOrderStateCommandHandler(
     IAppDbContext context,
     ILogger<UpdateWorkOrderStateCommandHandler> logger,
+    TimeProvider timeProvider,
     HybridCache cache
 ) : IRequestHandler<UpdateWorkOrderStateCommand, Result<Updated>>
 {
     private readonly IAppDbContext _context = context;
     private readonly ILogger<UpdateWorkOrderStateCommandHandler> _logger = logger;
+    private readonly TimeProvider _timeProvider = timeProvider;
     private readonly HybridCache _cache = cache;
 
     public async Task<Result<Updated>> Handle(
@@ -38,7 +40,7 @@ public class UpdateWorkOrderStateCommandHandler(
             );
             return ApplicationErrors.WorkOrderNotFound;
         }
-        if (workOrder.StartedAtUtc > DateTimeOffset.UtcNow)
+        if (workOrder.StartedAtUtc > _timeProvider.GetUtcNow())
         {
             _logger.LogWarning(
                 "Updating work order state failed, WorkOrder with ID {WorkOrderId} cannot be updated to state {NewState} because it has not started yet.",

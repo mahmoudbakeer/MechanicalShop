@@ -1,7 +1,9 @@
 using MechanicShop.Application.Common.Errors;
 using MechanicShop.Application.Common.Interfaces;
 using MechanicShop.Domain.Common.Results;
+using MechanicShop.Domain.Employees.Enum;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +38,10 @@ public class AssignLaborCommandHandler(
             );
             return ApplicationErrors.WorkOrderNotFound;
         }
-        var labor = await _context.Employees.FindAsync([request.LaborId], cancellationToken);
+        var labor = await _context.Employees.FirstOrDefaultAsync(
+            e => e.Id == request.LaborId && e.Role == Role.Labor,
+            cancellationToken
+        );
         if (labor is null)
         {
             _logger.LogWarning(

@@ -28,7 +28,7 @@ public class Customer : AuditableEntity
         Guid id,
         string name,
         string email,
-        string phonenumber,
+        string phoneNumber,
         List<Vehicle> vehicles
     )
     {
@@ -37,15 +37,15 @@ public class Customer : AuditableEntity
 
         if (string.IsNullOrEmpty(name))
             return CustomerError.NameRequired;
-        if (string.IsNullOrEmpty(phonenumber))
+        if (string.IsNullOrEmpty(phoneNumber))
             return CustomerError.PhoneNumberRequired;
-        if (!phonenumber.StartsWith("+") || phonenumber.Count() > 15 || phonenumber.Count() < 7)
+        if (!phoneNumber.StartsWith("+") || phoneNumber.Count() > 15 || phoneNumber.Count() < 7)
             return CustomerError.PhoneNumberInvalid;
         if (string.IsNullOrEmpty(email))
             return CustomerError.EmailRequired;
         if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             return CustomerError.EmailInValid;
-        return new Customer(id, name, email, phonenumber, [.. vehicles]);
+        return new Customer(id, name, email, phoneNumber, [.. vehicles]);
     }
 
     public Result<Updated> Update(string name, string email, string phonenumber)

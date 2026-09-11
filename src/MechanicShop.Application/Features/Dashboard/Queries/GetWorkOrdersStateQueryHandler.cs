@@ -26,8 +26,8 @@ public class GetWorkOrdersStateQueryHandler(IAppDbContext context)
             .Include(wo => wo.RepairTasks)
                 .ThenInclude(rt => rt.Parts)
             .Include(wo => wo.Invoice)
-                .ThenInclude(i => i!.InvoiceLineItems) // here there is potentioal null reference exception if Invoice is null, but include is an instruction to run on database side, so it will not throw exception,
-            // but it will not include InvoiceLineItems if Invoice is null and no annoying warning will be appearing here
+                .ThenInclude(i => i!.LineItems) // here there is potentioal null reference exception if Invoice is null, but include is an instruction to run on database side, so it will not throw exception,
+                                                // but it will not include InvoiceLineItems if Invoice is null and no annoying warning will be appearing here
             .Where(wo => wo.StartedAtUtc >= startAt && wo.StartedAtUtc <= endAt);
 
         var totalOrders = await query.CountAsync(cancellationToken);

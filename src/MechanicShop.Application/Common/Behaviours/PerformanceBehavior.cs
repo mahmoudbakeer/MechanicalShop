@@ -6,16 +6,12 @@ using Microsoft.Extensions.Logging;
 namespace MechanicShop.Application.Common.Behaviours;
 
 public class PerformanceBehavior<TRequest, TResponse>(
-    Stopwatch stopwatch,
     ILogger<PerformanceBehavior<TRequest, TResponse>> logger,
-    IIdentityService identityService,
     IUser user
 ) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
-    private readonly Stopwatch _timer = stopwatch;
     private readonly ILogger<PerformanceBehavior<TRequest, TResponse>> _logger = logger;
-    private readonly IIdentityService _identityService = identityService;
     private readonly IUser _user = user;
 
     public async Task<TResponse> Handle(
@@ -24,34 +20,24 @@ public class PerformanceBehavior<TRequest, TResponse>(
         CancellationToken cancellationToken
     )
     {
-        _timer.Start();
+        var timer = Stopwatch.StartNew();
 
         var response = await next(cancellationToken);
 
-        _timer.Stop();
+        timer.Stop();
 
-        var elapsedMilliseconds = _timer.ElapsedMilliseconds;
-
-        if (elapsedMilliseconds > 500)
+        if (timer.ElapsedMilliseconds > 500)
         {
             string? requestName = typeof(TRequest).Name;
             string? userId = _user.UserId ?? string.Empty;
-            string? userName = string.Empty;
-
-            if (!string.IsNullOrEmpty(userId))
-            {
-                userName = await _identityService.GetUserNameAsync(userId, cancellationToken);
-            }
 
             _logger.LogInformation(
-                "Long Running Request: {Name} {@UserId} {@UserName} {@Request}",
+                "Long Running Request: {Name} {@UserId} {@Request}",
                 requestName,
                 userId,
-                userName,
                 request
             );
         }
-
         return response;
     }
 }

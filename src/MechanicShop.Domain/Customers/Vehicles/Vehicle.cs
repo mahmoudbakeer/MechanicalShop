@@ -34,7 +34,7 @@ public class Vehicle : AuditableEntity
     public static Result<Vehicle> Create(
         Guid id,
         string make,
-        string licenseplate,
+        string licensePlate,
         string model,
         int year
     )
@@ -50,7 +50,7 @@ public class Vehicle : AuditableEntity
         {
             return VehicleError.ModelRequired;
         }
-        if (string.IsNullOrEmpty(licenseplate))
+        if (string.IsNullOrEmpty(licensePlate))
         {
             return VehicleError.LicensePlateRequired;
         }
@@ -58,7 +58,7 @@ public class Vehicle : AuditableEntity
         {
             return VehicleError.YearInvalid;
         }
-        return new Vehicle(id, make, licenseplate, model, year);
+        return new Vehicle(id, make, licensePlate, model, year);
     }
 
     public Result<Updated> Update(string make, string licenseplate, string model, int year)
@@ -86,4 +86,3 @@ public class Vehicle : AuditableEntity
         return Result.Updated;
     }
 }
-

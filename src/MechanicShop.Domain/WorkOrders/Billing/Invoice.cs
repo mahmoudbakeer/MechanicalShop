@@ -6,7 +6,7 @@ namespace MechanicShop.Domain.WorkOrders.Billing;
 public class Invoice : AuditableEntity
 {
     private readonly List<InvoiceLineItem> _lineItems = [];
-    public IReadOnlyList<InvoiceLineItem> InvoiceLineItems => _lineItems; // same as the AsReadOnly()
+    public IReadOnlyList<InvoiceLineItem> LineItems => _lineItems; // same as the AsReadOnly()
     public WorkOrder WorkOrder { get; private set; }
     public Guid WorkOrderId { get; private set; }
     public DateTimeOffset PaidAtUtc { get; private set; }
