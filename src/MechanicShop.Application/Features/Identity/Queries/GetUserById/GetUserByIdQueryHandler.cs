@@ -19,10 +19,7 @@ public class GetUserByIdQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        Result<AppUserDto>? userResult = await _identityService.GetUserByIdAsync(
-            request.UserId!,
-            cancellationToken
-        );
+        Result<AppUserDto>? userResult = await _identityService.GetUserByIdAsync(request.UserId!);
 
         if (userResult.IsError)
         {

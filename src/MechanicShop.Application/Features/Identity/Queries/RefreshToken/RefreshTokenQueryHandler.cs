@@ -46,10 +46,7 @@ public class RefreshTokenQueryHandler(
             return ApplicationErrors.UserClaimsInvalid;
         }
 
-        Result<AppUserDto> userResult = await _identityService.GetUserByIdAsync(
-            userId,
-            cancellationToken
-        );
+        Result<AppUserDto> userResult = await _identityService.GetUserByIdAsync(userId);
 
         if (userResult.IsError)
         {

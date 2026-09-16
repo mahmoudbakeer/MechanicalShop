@@ -1,11 +1,10 @@
-using System.ComponentModel;
 using MechanicShop.Application.Common.Interfaces;
 using MechanicShop.Domain.Common.Results;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace MechanicShop.Application.Common.Behaviors;
+namespace MechanicShop.Application.Common.Behaviours;
 
 public class CachingBehavior<TRequest, TResponse>(
     ILogger<CachingBehavior<TRequest, TResponse>> logger,

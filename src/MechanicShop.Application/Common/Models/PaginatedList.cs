@@ -8,4 +8,3 @@ public sealed class PaginatedList<T>
     public int TotalNumber { get; init; }
     public IReadOnlyCollection<T>? Items { get; init; }
 }
-

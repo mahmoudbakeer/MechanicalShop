@@ -20,11 +20,7 @@ public class GenerateTokenQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        var authResult = await _identityService.AuthenticateAsync(
-            request.Email,
-            request.Password,
-            cancellationToken
-        );
+        var authResult = await _identityService.AuthenticateAsync(request.Email, request.Password);
 
         if (authResult.IsError)
             return authResult.Errors!;
