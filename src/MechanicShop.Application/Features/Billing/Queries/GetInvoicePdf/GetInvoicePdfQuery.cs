@@ -8,7 +8,7 @@ public sealed record GetInvoicePdfQuery(Guid InvoiceId) : ICachedQuery<Result<In
 {
     public string CacheKey => $"InvoicePdf_{InvoiceId}";
 
-    public string[] Tage => ["InvoicePdf"];
+    public string[] Tags => ["InvoicePdf"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

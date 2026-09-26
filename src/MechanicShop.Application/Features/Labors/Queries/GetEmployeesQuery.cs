@@ -11,7 +11,7 @@ public sealed record GetEmployeesQuery(int Page, int PageSize)
 {
     public string CacheKey => "Employees";
 
-    public string[] Tage => ["Employees"];
+    public string[] Tags => ["Employees"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

@@ -8,7 +8,7 @@ public sealed record GetInvoiceByIdQuery(Guid InvoiceId) : ICachedQuery<Result<I
 {
     public string CacheKey => $"invoice_{InvoiceId}";
 
-    public string[] Tage => ["ivnoice"];
+    public string[] Tags => ["ivnoice"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

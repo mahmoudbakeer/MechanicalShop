@@ -11,7 +11,7 @@ public sealed record GetRepairTasksQuery(int Page, int PageSize)
 {
     public string CacheKey => "repair_tasks";
 
-    public string[] Tage => ["repair_tasks"];
+    public string[] Tags => ["repair_tasks"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace MechanicShop.Application.Features.Dashboard.Queries;
 
 public class GetWorkOrdersStateQueryHandler(IAppDbContext context)
-    : IRequestHandler<GetWorkOrdersStateQuery, Result<WorkOrdersState>>
+    : IRequestHandler<GetWorkOrdersStateQuery, Result<WorkOrdersStates>>
 {
     private readonly IAppDbContext _context = context;
 
-    public async Task<Result<WorkOrdersState>> Handle(
+    public async Task<Result<WorkOrdersStates>> Handle(
         GetWorkOrdersStateQuery request,
         CancellationToken cancellationToken
     )
@@ -27,13 +27,13 @@ public class GetWorkOrdersStateQueryHandler(IAppDbContext context)
                 .ThenInclude(rt => rt.Parts)
             .Include(wo => wo.Invoice)
                 .ThenInclude(i => i!.LineItems) // here there is potentioal null reference exception if Invoice is null, but include is an instruction to run on database side, so it will not throw exception,
-                                                // but it will not include InvoiceLineItems if Invoice is null and no annoying warning will be appearing here
+            // but it will not include InvoiceLineItems if Invoice is null and no annoying warning will be appearing here
             .Where(wo => wo.StartedAtUtc >= startAt && wo.StartedAtUtc <= endAt);
 
         var totalOrders = await query.CountAsync(cancellationToken);
         if (totalOrders == 0)
         {
-            return new WorkOrdersState
+            return new WorkOrdersStates
             {
                 Date = request.Date,
                 TotalOrders = 0,
@@ -68,7 +68,7 @@ public class GetWorkOrdersStateQueryHandler(IAppDbContext context)
         var totalLaborCost = stats.Sum(wo => wo.RepairTasks.Sum(rt => rt.LaborCost));
         var netProfit = totalRevenue - totalPartsCost - totalLaborCost;
 
-        return new WorkOrdersState
+        return new WorkOrdersStates
         {
             Date = request.Date,
             TotalOrders = totalOrders,

@@ -2,6 +2,7 @@ using MechanicShop.Application.Common.Interfaces;
 using MechanicShop.Application.Common.Models;
 using MechanicShop.Application.Features.Commands.Customers.CustomerDtos;
 using MechanicShop.Application.Features.Customers.Mappers;
+using MechanicShop.Domain.Common.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,12 +12,12 @@ namespace MechanicShop.Application.Features.Customers.Queries.GetCustomers;
 public class GetCustomersQueryHandler(
     IAppDbContext context,
     ILogger<GetCustomersQueryHandler> logger
-) : IRequestHandler<GetCustomersQuery, PaginatedList<CustomerDto>>
+) : IRequestHandler<GetCustomersQuery, Result<PaginatedList<CustomerDto>>>
 {
     private readonly IAppDbContext _context = context;
     private readonly ILogger<GetCustomersQueryHandler> _logger = logger;
 
-    public async Task<PaginatedList<CustomerDto>> Handle(
+    public async Task<Result<PaginatedList<CustomerDto>>> Handle(
         GetCustomersQuery request,
         CancellationToken cancellationToken
     )

@@ -4,4 +4,4 @@ using MediatR;
 
 namespace MechanicShop.Application.Features.Dashboard.Queries;
 
-public sealed record GetWorkOrdersStateQuery(DateOnly Date) : IRequest<Result<WorkOrdersState>>;
+public sealed record GetWorkOrdersStateQuery(DateOnly Date) : IRequest<Result<WorkOrdersStates>>;

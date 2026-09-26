@@ -1,5 +1,3 @@
-using MechanicShop.Application.Features.Commands.Customers.CustomerDtos.Vehicle;
-using MechanicShop.Domain.Common.Results;
 using MediatR;
 
 namespace MechanicShop.Application.Features.Customers.Commands.UpdateCustomer;

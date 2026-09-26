@@ -1,6 +1,6 @@
 namespace MechanicShop.Application.Features.Dashboard.DashboardDtos;
 
-public class WorkOrdersState
+public class WorkOrdersStates
 {
     public int TotalOrders { get; set; }
     public int ScheduledOrders { get; set; }

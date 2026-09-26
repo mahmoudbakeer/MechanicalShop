@@ -8,7 +8,7 @@ public sealed record GetRepairTaskByIdQuery(Guid Id) : ICachedQuery<Result<Repai
 {
     public string CacheKey => $"repair_task_{Id}";
 
-    public string[] Tage => ["repair_task"];
+    public string[] Tags => ["repair_task"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

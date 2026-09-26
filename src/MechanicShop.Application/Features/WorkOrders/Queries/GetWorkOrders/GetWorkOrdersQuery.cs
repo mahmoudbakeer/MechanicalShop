@@ -39,7 +39,7 @@ public sealed record GetWorkOrdersQuery(
         + $":edto={EndDateTo?.ToString("yyyyMMdd") ?? "-"}"
         + $":spot={Spot?.ToString() ?? "-"}";
 
-    public string[] Tage => ["work-order"];
+    public string[] Tags => ["work-order"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

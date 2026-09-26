@@ -8,7 +8,7 @@ public sealed record GetWorkOrderByIdQuery(Guid WorkOrderId) : ICachedQuery<Resu
 {
     public string CacheKey => $"work-order_{WorkOrderId}";
 
-    public string[] Tage => ["work-order"];
+    public string[] Tags => ["work-order"];
 
     public TimeSpan Expiration => TimeSpan.FromMinutes(10);
 }

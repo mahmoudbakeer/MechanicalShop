@@ -70,11 +70,6 @@ public class CreateWorkOrderCommandHandler(
             );
             return ApplicationErrors.RepairTaskNotFound;
         }
-        if (!Enum.TryParse<Spot>(request.Spot, true, out var spot))
-        {
-            _logger.LogWarning("Invalid spot value: {Spot}", request.Spot);
-            return WorkOrderError.InvalidSpot;
-        }
 
         var duration = TimeSpan.FromMinutes(repairTasks.Sum(rt => (int)rt.EstimatedDuration));
         var endAt = request.StartAt.Add(duration);
@@ -103,7 +98,7 @@ public class CreateWorkOrderCommandHandler(
 
         if (
             await _workOrderValidator.IsSpotAvailableAsync(
-                spot: spot,
+                 spot: request.Spot,
                 startTime: request.StartAt,
                 endAt,
                 ct: cancellationToken
@@ -160,7 +155,7 @@ public class CreateWorkOrderCommandHandler(
             startAt: request.StartAt,
             endAt,
             vehicleId: request.VehicleId,
-            spot: spot,
+            spot: request.Spot,
             repairTasks: repairTasks,
             Now: _dateTimeProvider.GetUtcNow()
         );
