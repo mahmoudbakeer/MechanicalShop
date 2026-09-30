@@ -9,11 +9,13 @@ using MechanicShop.Application.Features.Customers.Queries.GetCustomers;
 using MechanicShop.Contracts.Requests.Customers;
 using MechanicShop.Contracts.Requests.PaginatedRequests;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/customers")]
+[Authorize]
 public class CustomerController(ISender sender) : ControllerApi
 {
     [HttpGet]
@@ -56,6 +58,7 @@ public class CustomerController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{customerId:Guid}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -94,6 +97,7 @@ public class CustomerController(ISender sender) : ControllerApi
     }
 
     [HttpPost]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
@@ -137,6 +141,7 @@ public class CustomerController(ISender sender) : ControllerApi
     }
 
     [HttpDelete("{customerId:Guid}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]

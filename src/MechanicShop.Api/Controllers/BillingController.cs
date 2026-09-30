@@ -5,11 +5,13 @@ using MechanicShop.Application.Features.Billing.Commands.SettleInvoice;
 using MechanicShop.Application.Features.Billing.Queries.GetInvoiceById;
 using MechanicShop.Application.Features.Billing.Queries.GetInvoicePdf;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/invoices")]
+[Authorize(Policy = "ManagerOnly")]
 public class InvoiceController(ISender sender) : ControllerApi
 {
     [HttpPost("workorders/{workOrderId:Guid}")]

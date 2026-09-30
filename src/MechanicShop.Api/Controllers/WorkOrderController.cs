@@ -16,11 +16,13 @@ using MechanicShop.Contracts.Requests.WorkOrders;
 using MechanicShop.Domain.WorkOrders.Enum;
 using MechanicShop.Domain.WorkOrders.Events;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/workorders")]
+[Authorize]
 public class WorkOrderController(ISender sender) : ControllerApi
 {
     [HttpGet]
@@ -76,6 +78,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{workOrderId:Guid}/labor")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -96,6 +99,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{workOrderId:Guid}/relocation")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -118,6 +122,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{workOrderId:Guid}/spot")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -139,6 +144,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpDelete("{workOrderId:Guid}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -155,6 +161,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{workOrderId:Guid}/state")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -176,6 +183,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpPost]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(WorkOrderDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -212,6 +220,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
     }
 
     [HttpGet("schedule/{date}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ScheduleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]

@@ -12,11 +12,13 @@ using MechanicShop.Contracts.Requests.PaginatedRequests;
 using MechanicShop.Contracts.Requests.RepairTasks;
 using MechanicShop.Domain.RepairTasks.Enum;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/repairtasks")]
+[Authorize]
 public class RepairTaskController(ISender sender) : ControllerApi
 {
     [HttpGet]
@@ -80,6 +82,7 @@ public class RepairTaskController(ISender sender) : ControllerApi
     }
 
     [HttpPut("{repairTaskId:Guid}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -117,6 +120,7 @@ public class RepairTaskController(ISender sender) : ControllerApi
     }
 
     [HttpPost]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
@@ -156,6 +160,7 @@ public class RepairTaskController(ISender sender) : ControllerApi
     }
 
     [HttpDelete("{repairTaskId:Guid}")]
+    [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]

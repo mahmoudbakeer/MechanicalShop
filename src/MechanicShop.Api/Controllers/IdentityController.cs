@@ -7,6 +7,7 @@ using MechanicShop.Application.Features.Identity.Queries.GetUserById;
 using MechanicShop.Application.Features.Identity.Queries.RefreshToken;
 using MechanicShop.Contracts.Requests.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
@@ -55,6 +56,7 @@ public class IdentityController(ISender sender) : ControllerApi
     }
 
     [HttpGet("current-user/claims")]
+    [Authorize]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]

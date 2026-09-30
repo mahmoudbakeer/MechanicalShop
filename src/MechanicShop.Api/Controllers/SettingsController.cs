@@ -1,12 +1,14 @@
 using Asp.Versioning;
 using MechanicShop.Contracts.Responses;
 using MechanicShop.Infrastructure.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/settings")]
+[Authorize]
 [ApiVersionNeutral]
 public class SettingsController(IOptions<AppSettings> options) : ControllerApi
 {

@@ -2,11 +2,13 @@ using Asp.Versioning;
 using MechanicShop.Application.Features.Dashboard.DashboardDtos;
 using MechanicShop.Application.Features.Dashboard.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/dashboard")]
+[Authorize]
 public class DashboardController(ISender sender) : ControllerApi
 {
     [HttpGet("state")]

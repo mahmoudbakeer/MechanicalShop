@@ -4,11 +4,13 @@ using MechanicShop.Application.Features.Labors.LaborDtos;
 using MechanicShop.Application.Features.Labors.Queries;
 using MechanicShop.Contracts.Requests.PaginatedRequests;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/labors")]
+[Authorize]
 public class LaborController(ISender sender) : ControllerApi
 {
     [HttpGet]
