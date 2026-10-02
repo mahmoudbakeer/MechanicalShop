@@ -71,4 +71,9 @@ public static class ApplicationErrors
             "ApplicationErrors_Auth_Token_Generation_Failed.",
             "Token generation failed."
         );
+    public static Error WorkOrderAlreadyHasInvoice =>
+    Error.Conflict(
+        "APplicationErrors_WorkOrder_HasInvoice.",
+        "Can't re-issue an invoice for this order because it's already has one."
+    );
 }

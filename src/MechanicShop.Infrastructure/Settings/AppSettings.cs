@@ -2,6 +2,7 @@ namespace MechanicShop.Infrastructure.Settings;
 
 public class AppSettings
 {
+    public const string SectionName = "AppSettings";
     public TimeOnly OpeningTime { get; set; }
     public TimeOnly ClosingTime { get; set; }
     public int MaxSpots { get; set; }

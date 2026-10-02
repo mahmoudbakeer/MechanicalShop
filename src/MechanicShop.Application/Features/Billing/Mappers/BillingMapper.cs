@@ -12,8 +12,8 @@ public static class BillingMapper
         {
             Id = invoice.Id,
             WorkOrderId = invoice.WorkOrderId,
-            Customer = invoice.WorkOrder!.Vehicle!.Customer!.ToDto(),
-            Vehicle = invoice.WorkOrder.Vehicle.ToDto(),
+            Customer = invoice.WorkOrder.Vehicle.Customer is null ? null : invoice.WorkOrder!.Vehicle!.Customer!.ToDto(),
+            Vehicle = invoice.WorkOrder.Vehicle is null ? null : invoice.WorkOrder.Vehicle.ToDto(),
             IssuedAtUtc = invoice.IssuedAtUtc,
             Subtotal = invoice.SubTotal,
             TaxAmount = invoice.TaxAmount,

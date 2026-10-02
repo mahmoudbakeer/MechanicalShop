@@ -4,6 +4,7 @@ using MechanicShop.Application.Features.Billing.BillingDtos;
 using MechanicShop.Application.Features.Billing.Mappers;
 using MechanicShop.Domain.Common.Results;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MechanicShop.Application.Features.Billing.Queries.GetInvoiceById;
@@ -21,7 +22,7 @@ public sealed class GetInvoiceByIdQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        var invoice = await _context.Invoices.FindAsync([request.InvoiceId], cancellationToken);
+        var invoice = await _context.Invoices.Include(i => i.WorkOrder).ThenInclude(wo => wo.Vehicle).ThenInclude(v => v.Customer).FirstOrDefaultAsync(i => i.Id == request.InvoiceId, cancellationToken);
         if (invoice is null)
         {
             _logger.LogWarning(
@@ -30,6 +31,10 @@ public sealed class GetInvoiceByIdQueryHandler(
             );
             return ApplicationErrors.InvoiceNotFound;
         }
+        _logger.LogInformation(
+    "Invoice {InvoiceId}: Status={Status}",
+    invoice.Id,
+    invoice.Status);
         var invoiceDto = invoice.ToDto();
         return invoiceDto;
     }

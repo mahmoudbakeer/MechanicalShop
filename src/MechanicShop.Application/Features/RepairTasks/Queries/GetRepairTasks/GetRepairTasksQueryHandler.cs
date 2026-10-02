@@ -33,6 +33,7 @@ public sealed class GetRepairTasksQueryHandler(
             .AsNoTracking()
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
+            .Include(rt => rt.Parts)
             .ToListAsync(cancellationToken);
 
         var totalCount = await _context.RepairTasks.CountAsync(cancellationToken);

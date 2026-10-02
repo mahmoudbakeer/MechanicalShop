@@ -49,7 +49,7 @@ public class TokenProvider(
         var audience = JwtSettings["Audience"];
         var key = JwtSettings["Secret"];
         var now = _timeProvider.GetUtcNow();
-        var expires = now.AddMinutes(int.Parse(JwtSettings["TokenExperationInMinutes"]!));
+        var expires = now.AddMinutes(int.Parse(JwtSettings["TokenExpirationInMinutes"]!));
 
         var claims = new List<Claim>()
         {
@@ -77,8 +77,10 @@ public class TokenProvider(
         var tokenHandler = new JwtSecurityTokenHandler();
 
         SecurityToken securityToken = tokenHandler.CreateToken(descriptor);
-
-        await _context.RefreshTokens.Where(rt => rt.UserId == user.UserId).ExecuteDeleteAsync(ct);
+        var oldTokens = await _context.RefreshTokens
+            .Where(rt => rt.UserId == user.UserId)
+            .ToListAsync(ct);
+        _context.RefreshTokens.RemoveRange(oldTokens);
 
         var newRefreshToken = RefreshToken.Create(
             Guid.NewGuid(),

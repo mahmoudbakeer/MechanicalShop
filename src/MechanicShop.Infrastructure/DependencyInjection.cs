@@ -7,6 +7,7 @@ using MechanicShop.Infrastructure.Identity;
 using MechanicShop.Infrastructure.Identity.Policies;
 using MechanicShop.Infrastructure.RealTime;
 using MechanicShop.Infrastructure.Services;
+using MechanicShop.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +29,8 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContextInitialiser, ApplicationDbContextInitialiser>();
 
         services.AddSingleton(TimeProvider.System);
-
+        services.Configure<AppSettings>(
+            configuration.GetSection(AppSettings.SectionName));
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         ArgumentNullException.ThrowIfNull(connectionString);
 
@@ -71,6 +73,7 @@ public static class DependencyInjection
                     ),
                 };
             });
+
         services
             .AddIdentityCore<AppUser>(op =>
             {

@@ -97,8 +97,8 @@ public class CreateWorkOrderCommandHandler(
         }
 
         if (
-            await _workOrderValidator.IsSpotAvailableAsync(
-                 spot: request.Spot,
+            !await _workOrderValidator.IsSpotAvailableAsync(
+                spot: request.Spot,
                 startTime: request.StartAt,
                 endAt,
                 ct: cancellationToken

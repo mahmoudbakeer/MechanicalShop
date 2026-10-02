@@ -9,7 +9,7 @@ public class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
 {
     public void Configure(EntityTypeBuilder<WorkOrder> builder)
     {
-        builder.Property(wo => wo.Discount).IsRequired().HasPrecision(18, 2);
+        builder.Property(wo => wo.Discount).IsRequired().HasPrecision(18, 2).HasDefaultValue(0m);
         builder.Property(wo => wo.StartedAtUtc).IsRequired();
         builder.Property(wo => wo.EndAtUtc).IsRequired();
         builder.Property(wo => wo.State).HasConversion<string>().IsRequired();

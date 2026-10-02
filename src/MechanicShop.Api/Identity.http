@@ -1,0 +1,28 @@
+@baseUrl = https://localhost:7007/identity
+
+### Login As Manager
+POST {{baseUrl}}/token/generate
+Content-Type: application/json
+
+{
+    "email": "pm@localhost",
+    "password": "pm@localhost"
+}
+
+### Login As Labor
+POST {{baseUrl}}/token/generate
+Content-Type: application/json
+
+{
+    "email": "john.labor@localhost",
+    "password": "john.labor@localhost"
+}
+
+### Refresh Token
+POST {{baseUrl}}/token/refresh-token
+Content-Type: application/json
+
+{
+    "ExpiredAccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWE1OTEyOS02YzIwLTQxN2EtODM0ZC0xMWEyMDhkMzJkOTYiLCJlbWFpbCI6InBtQGxvY2FsaG9zdCIsInJvbGUiOiJNYW5hZ2VyIiwibmJmIjoxNzkwNzk0MTExLCJleHAiOjE3OTA3OTc3MTEsImlhdCI6MTc5MDc5NDExMSwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0In0.gF0X0xlLi688zHn5oNLVoTRAnUgDKJXHbjZ5TP2mAFE",
+    "refreshToken": "DspAIW5BDFeKr+zlE9VGK9BsSqGaubTbdxcyex6FseY3qEi/X1jUB6GIxG1O5qJzMnntGPSYmkIlXJNd/CzfCQ=="
+}

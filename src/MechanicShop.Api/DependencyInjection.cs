@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MechanicShop.Api.Exceptions;
+using MechanicShop.Api.OpenApi.Transformers;
 using MechanicShop.Api.Services;
 using MechanicShop.Application.Common.Interfaces;
 using MechanicShop.Infrastructure.Settings;
@@ -25,6 +26,7 @@ public static class DependencyInjection
             .AddCustomerProblemDetails()
             .AddExceptionHandling()
             .AddCustomeApiVersioning()
+            .AddOpenApiDocumentation()
             .AddIdentityInfrastructure()
             .AddConfigureCORS(configuration)
             .AddAppRateLimiting()
@@ -46,7 +48,16 @@ public static class DependencyInjection
         });
         return services;
     }
-
+    private static IServiceCollection AddOpenApiDocumentation(this IServiceCollection services)
+    {
+        services.AddOpenApi("v1", options =>
+        {
+            options.AddDocumentTransformer<VersioningTransformer>();
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+            options.AddOperationTransformer<BearerSecuritySchemeTransformer>();
+        });
+        return services;
+    }
     private static IServiceCollection AddAppOpenTelemetry(this IServiceCollection services)
     {
         services

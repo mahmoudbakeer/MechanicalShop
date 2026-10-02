@@ -23,6 +23,14 @@ public class OverDueOrdersCleanUpService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation(
+                                    "OverdueBookingCleanupFrequencyMinutes={Freq}, " +
+                                    "BookingCancellationThresholdMinutes={Threshold}, " +
+                                    "OpeningTime={Open}",
+                                    _appSettings.OverdueBookingCleanupFrequencyMinutes,
+                                    _appSettings.BookingCancellationThresholdMinutes,
+                                    _appSettings.OpeningTime
+                                );
         using var timer = new PeriodicTimer(
             TimeSpan.FromMinutes(_appSettings.OverdueBookingCleanupFrequencyMinutes)
         );

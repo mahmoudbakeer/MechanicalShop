@@ -33,18 +33,19 @@ public sealed class SettleInvoiceCommandHandler(
             );
             return ApplicationErrors.InvoiceNotFound;
         }
-        var Payresult = invoice.PayInvoice(_timeProvider);
-        if (Payresult.IsError)
+        var payResult = invoice.PayInvoice(_timeProvider);
+        if (payResult.IsError)
         {
             _logger.LogWarning(
                 "Invoice payment failed for InvoiceId: {InvoiceId}. Errors: {Errors}",
                 invoice.Id,
-                Payresult.Errors
+                payResult.Errors
             );
 
-            return Payresult.Errors!;
+            return payResult.Errors!;
         }
         await _context.SaveChangesAsync(cancellationToken);
+
         await _hybridCache.RemoveAsync("invoice", cancellationToken);
         return Result.Success;
     }

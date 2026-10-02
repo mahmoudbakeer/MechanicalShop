@@ -43,7 +43,7 @@ public class Customer : AuditableEntity
             return CustomerError.PhoneNumberInvalid;
         if (string.IsNullOrEmpty(email))
             return CustomerError.EmailRequired;
-        if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+$"))
             return CustomerError.EmailInValid;
         return new Customer(id, name, email, phoneNumber, [.. vehicles]);
     }

@@ -87,7 +87,7 @@ public class CustomerController(ISender sender) : ControllerApi
                         v.Make,
                         v.Model,
                         v.Year,
-                        v.LicensePlat
+                        v.LicensePlate
                     )),
                 ]
             ),
@@ -148,7 +148,7 @@ public class CustomerController(ISender sender) : ControllerApi
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [EndpointSummary("Delete a Customer.")]
-    [EndpointDescription("Delete a custoemr if it is allowed.")]
+    [EndpointDescription("Delete a customer if it is allowed.")]
     [EndpointName("DeleteCustomer")]
     [MapToApiVersion("1.0")]
     public async Task<IActionResult> DeleteCustomer(

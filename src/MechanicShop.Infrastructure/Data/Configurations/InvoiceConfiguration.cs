@@ -21,11 +21,12 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             li =>
             {
                 li.HasKey(li => new { li.InvoiceId, li.LineNumber });
+
                 li.WithOwner().HasForeignKey(li => li.InvoiceId);
                 li.Property(l => l.Description).IsRequired().HasMaxLength(100);
                 li.Property(l => l.Quantity).IsRequired();
                 li.Property(l => l.UnitPrice).IsRequired().HasColumnType("decimal(18,2)");
-                li.Property(l => l.LineNumber).IsRequired();
+                li.Property(l => l.LineNumber).IsRequired().ValueGeneratedNever();
             }
         );
     }

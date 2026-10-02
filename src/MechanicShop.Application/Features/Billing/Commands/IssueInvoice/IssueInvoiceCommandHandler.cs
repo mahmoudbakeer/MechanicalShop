@@ -56,7 +56,12 @@ public sealed class IssueInvoiceCommandHandler(
 
             return ApplicationErrors.WorkOrderMustBeCompletedForInvoicing;
         }
-
+        var workOrderHasInvoice = await _context.Invoices.AnyAsync(i => i.WorkOrderId == request.WorkOrderId);
+        if (workOrderHasInvoice)
+        {
+            _logger.LogWarning("Invoice issuance rejected. WorkOrder {WorkOrderId} already has an issued invoice.", request.WorkOrderId);
+            return ApplicationErrors.WorkOrderAlreadyHasInvoice;
+        }
         var InvoiceId = Guid.NewGuid();
 
         int LineNumber = 1;
@@ -91,7 +96,7 @@ public sealed class IssueInvoiceCommandHandler(
         }
 
         var subTotal = lineItems.Select(lt => lt.LineTotal);
-        var discount = workOrder.Discount ?? 0m;
+        var discount = workOrder.Discount;
 
         var TaxRate = MechanicalShopConstants.TaxRate;
 
@@ -117,6 +122,10 @@ public sealed class IssueInvoiceCommandHandler(
         var invoice = invoiceResult.Value;
 
         _context.Invoices.Add(invoice);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+
         await _hybridCache.RemoveAsync("invoice", cancellationToken);
 
         return invoice.ToDto();

@@ -26,7 +26,7 @@ public class WorkOrder : AuditableEntity
     public decimal TotalPartsCost => _repairTasks.SelectMany(rp => rp.Parts).Sum(p => p.Cost);
     public decimal TotalLaborCost => _repairTasks.Sum(rp => rp.LaborCost);
     public decimal Total => TotalPartsCost + TotalLaborCost;
-    public decimal? Discount { get; private set; }
+    public decimal Discount { get; private set; }
 
 #pragma warning disable CS8618
     private WorkOrder() { }
@@ -49,7 +49,7 @@ public class WorkOrder : AuditableEntity
         VehicleId = vehicleId;
         _repairTasks = repairTasks;
         Spot = spot;
-
+        Discount = 0m;
         State = WorkOrderState.Scheduled;
     }
 
@@ -72,8 +72,8 @@ public class WorkOrder : AuditableEntity
             return WorkOrderError.VehicleIdRequired;
         if (!System.Enum.IsDefined(spot))
             return WorkOrderError.InvalidSpot;
-        if (startAt < Now)
-            return WorkOrderError.InvalidStartTime;
+        // if (startAt < Now)
+        //     return WorkOrderError.InvalidStartTime;
         if (startAt >= endAt)
             return WorkOrderError.InvalidEndTime;
         if (repairTasks is null || repairTasks.Count == 0)

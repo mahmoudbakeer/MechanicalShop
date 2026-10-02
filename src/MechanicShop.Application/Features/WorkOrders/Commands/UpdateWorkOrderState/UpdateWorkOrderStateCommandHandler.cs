@@ -40,15 +40,15 @@ public class UpdateWorkOrderStateCommandHandler(
             );
             return ApplicationErrors.WorkOrderNotFound;
         }
-        if (workOrder.StartedAtUtc > _timeProvider.GetUtcNow())
-        {
-            _logger.LogWarning(
-                "Updating work order state failed, WorkOrder with ID {WorkOrderId} cannot be updated to state {NewState} because it has not started yet.",
-                request.WorkOrderId,
-                request.NewState
-            );
-            return WorkOrderError.StateTransformationNotAllowed(workOrder.StartedAtUtc);
-        }
+        // if (request.NewState == WorkOrderState.Completed && workOrder.StartedAtUtc > _timeProvider.GetUtcNow())
+        // {
+        //     _logger.LogWarning(
+        //         "Updating work order state failed, WorkOrder with ID {WorkOrderId} cannot be updated to state {NewState} because it has not started yet.",
+        //         request.WorkOrderId,
+        //         request.NewState
+        //     );
+        //     return WorkOrderError.StateTransformationNotAllowed(workOrder.StartedAtUtc);
+        // }
         var result = workOrder.UpdateState(request.NewState);
         if (result.IsError)
         {

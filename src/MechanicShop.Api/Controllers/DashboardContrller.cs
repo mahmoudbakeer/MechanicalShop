@@ -18,7 +18,7 @@ public class DashboardController(ISender sender) : ControllerApi
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [EndpointSummary("Retreive the WorkOrders state.")]
     [EndpointDescription("Retreive the WorkOrders state in details for specified date.")]
-    [EndpointName("CreateCustomer")]
+    [EndpointName("GetDashboard")]
     [MapToApiVersion("1.0")]
     public async Task<ActionResult<WorkOrdersStates>> GetDashboard(
         [FromQuery] DateOnly? date,

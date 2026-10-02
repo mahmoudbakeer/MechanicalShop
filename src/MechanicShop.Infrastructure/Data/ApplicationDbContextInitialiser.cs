@@ -11,6 +11,7 @@ using MechanicShop.Domain.WorkOrders.Enum;
 using MechanicShop.Domain.WorkOrders.Events;
 using MechanicShop.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MechanicShop.Infrastructure.Data;
@@ -161,84 +162,76 @@ public class ApplicationDbContextInitialiser(
             }
         }
 
-        if (!_context.Employees.Any())
+        if (!await _context.Employees.AnyAsync())
         {
-            _context.Employees.AddRange([
-                Employee.Create(Guid.Parse(manager.Id), "Primary", "Manager", Role.Manager).Value,
-                Employee.Create(Guid.Parse(labor01.Id), "John", "S.", Role.Labor).Value,
-                Employee.Create(Guid.Parse(labor02.Id), "Peter", "R.", Role.Labor).Value,
-                Employee.Create(Guid.Parse(labor03.Id), "Kevin", "M.", Role.Labor).Value,
-                Employee.Create(Guid.Parse(labor04.Id), "Suzan", "L.", Role.Labor).Value,
-            ]);
+            var employeeResults = new[]
+            {
+        Employee.Create(Guid.Parse(manager.Id), "Primary", "Manager", Role.Manager),
+        Employee.Create(Guid.Parse(labor01.Id), "John", "S.", Role.Labor),
+        Employee.Create(Guid.Parse(labor02.Id), "Peter", "R.", Role.Labor),
+        Employee.Create(Guid.Parse(labor03.Id), "Kevin", "M.", Role.Labor),
+        Employee.Create(Guid.Parse(labor04.Id), "Suzan", "L.", Role.Labor),
+    };
+
+            foreach (var r in employeeResults)
+            {
+                _logger.LogInformation(
+                    "Employee seed → IsError={IsError}, Value={Value}, Errors=[{Errors}]",
+                    r.IsError,
+                    r.Value,
+                    string.Join(" | ", r.Errors!)
+                );
+            }
+
+            if (employeeResults.Any(r => r.IsError))
+            {
+                throw new InvalidOperationException(
+                    "Employee seeding failed:\n" +
+                    string.Join("\n", employeeResults.SelectMany(r => r.Errors!))
+                );
+            }
+
+            _context.Employees.AddRange(employeeResults.Select(r => r.Value));
         }
 
-        if (!_context.Customers.Any())
+        if (!await _context.Customers.AnyAsync())
         {
-            List<Vehicle> vehicles =
-            [
-                Vehicle
-                    .Create(
-                        id: Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"),
-                        make: "Toyota",
-                        model: "Camry",
-                        year: 2020,
-                        licensePlate: "ABC123"
-                    )
-                    .Value,
-                Vehicle
-                    .Create(
-                        id: Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"),
-                        make: "Honda",
-                        model: "Civic",
-                        year: 2018,
-                        licensePlate: "XYZ456"
-                    )
-                    .Value,
-            ];
+            var vehicleResults = new[]
+            {
+        Vehicle.Create(Guid.Parse("61401e63-007b-4b1c-8914-9eb6e9bd95c5"), "Toyota", "Camry",  "ABC123" ,2020),
+        Vehicle.Create(Guid.Parse("13c80914-41ad-4d46-b7bb-60f6c89ad01e"), "Honda", "Civic",  "XYZ456" , 2018),
+        Vehicle.Create(Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"), "Ford", "Focus",  "DEF789",2021),
+        Vehicle.Create(Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"), "Chevrolet", "Malibu", "GHI012",2019),
+    };
 
-            _context.Customers.AddRange([
-                Customer
-                    .Create(
-                        id: Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"),
-                        name: "John Doe",
-                        phoneNumber: "123456789",
-                        email: "john.doe@localhost",
-                        vehicles: vehicles
-                    )
-                    .Value,
-                Customer
-                    .Create(
-                        id: Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"),
-                        name: "Sarah Peter",
-                        phoneNumber: "987654321",
-                        email: "sarah.peter@localhost",
-                        vehicles:
-                        [
-                            Vehicle
-                                .Create(
-                                    id: Guid.Parse("a04f329d-0f5a-46a0-beae-699c034ae401"),
-                                    make: "Ford",
-                                    model: "Focus",
-                                    year: 2021,
-                                    licensePlate: "DEF789"
-                                )
-                                .Value,
-                            Vehicle
-                                .Create(
-                                    id: Guid.Parse("cf60e95b-5752-4c26-aa07-31a34164606c"),
-                                    make: "Chevrolet",
-                                    model: "Malibu",
-                                    year: 2019,
-                                    licensePlate: "GHI012"
-                                )
-                                .Value,
-                        ]
-                    )
-                    .Value,
-            ]);
+            foreach (var r in vehicleResults)
+                _logger.LogInformation("Vehicle seed → IsError={IsError}, Errors=[{Errors}]",
+                    r.IsError, string.Join(" | ", r.Errors!));
+
+            var customerResults = new[]
+            {
+        Customer.Create(
+            Guid.Parse("f522bbe5-e3b1-4e2c-a8a3-c41550dcf39d"),
+            "John Doe", "john.doe@localhost", "+123456789",
+            new List<Vehicle> { vehicleResults[0].Value, vehicleResults[1].Value }),
+        Customer.Create(
+            Guid.Parse("73a04dd3-c81a-4a54-9882-ef1017eb192d"),
+            "Sarah Peter",  "sarah.peter@localhost","+987654321",
+            new List<Vehicle> { vehicleResults[2].Value, vehicleResults[3].Value }),
+    };
+
+            foreach (var r in customerResults)
+                _logger.LogInformation("Customer seed → IsError={IsError}, Errors=[{Errors}]",
+                    r.IsError, string.Join(" | ", r.Errors!));
+
+            _context.Customers.AddRange(
+                customerResults.Select(r => r.Value)
+                    .Where(c => c is not null)
+                    .Cast<Customer>()
+            );
         }
 
-        if (!_context.RepairTasks.Any())
+        if (!await _context.RepairTasks.AnyAsync())
         {
             _context.RepairTasks.AddRange([
                 RepairTask
@@ -428,7 +421,7 @@ public class ApplicationDbContextInitialiser(
 
         await _context.SaveChangesAsync();
 
-        if (!_context.WorkOrders.Any())
+        if (!await _context.WorkOrders.AnyAsync())
         {
             var repairTasks = _context.RepairTasks.ToList();
             var vehicles = _context.Vehicles.ToList();
@@ -538,7 +531,7 @@ public class ApplicationDbContextInitialiser(
                 utcNow.Year,
                 utcNow.Month,
                 utcNow.Day,
-                utcNow.Hour,
+                utcNow.Hour + 1,
                 utcNow.Minute - (utcNow.Minute % 15),
                 0,
                 TimeSpan.Zero
@@ -546,29 +539,40 @@ public class ApplicationDbContextInitialiser(
 
             var startTimeFirstOrder = floored;
 
-            var workOrderStartingNow = WorkOrder
-                .Create(
-                    Guid.NewGuid(),
-                    Guid.Parse(labor01.Id),
-                    startTimeFirstOrder,
-                    startTimeFirstOrder.AddMinutes(
-                        repairTasksForFirstOrder.Sum(rt => (int)rt.EstimatedDuration)
-                    ),
-                    _context.Vehicles.OrderBy(_ => Guid.NewGuid()).First().Id,
-                    Spot.A,
-                    repairTasksForFirstOrder,
-                    DateTime.UtcNow
-                )
-                .Value;
+            var workOrderStartingNowResult = WorkOrder.Create(
+    Guid.NewGuid(),
+    Guid.Parse(labor01.Id),
+    startTimeFirstOrder,
+    startTimeFirstOrder.AddMinutes(
+        repairTasksForFirstOrder.Sum(rt => (int)rt.EstimatedDuration)
+    ),
+    _context.Vehicles.OrderBy(_ => Guid.NewGuid()).First().Id,
+    Spot.A,
+    repairTasksForFirstOrder,
+    DateTime.UtcNow
+);
 
-            workOrderStartingNow.UpdateState(WorkOrderState.InProgress);
+            _logger.LogInformation(
+                "workOrderStartingNow → IsError={IsError}, Errors=[{Errors}]",
+                workOrderStartingNowResult.IsError,
+                string.Join(" | ", workOrderStartingNowResult.Errors!));
 
+            if (workOrderStartingNowResult.IsError)
+                throw new InvalidOperationException(
+                    "workOrderStartingNow failed: " +
+                    string.Join(" | ", workOrderStartingNowResult.Errors!));
+
+            var workOrderStartingNow = workOrderStartingNowResult.Value;
+
+            var UpdateStateResult = workOrderStartingNow.UpdateState(WorkOrderState.InProgress);
+            _logger.LogInformation("Customer seed → IsError={IsError}, Errors=[{Errors}]",
+                    UpdateStateResult.IsError, string.Join(" | ", UpdateStateResult.Errors!));
             var repairTasksEndingNow = _context.RepairTasks.First(rt =>
                 rt.EstimatedDuration == RepairTaskDuration.Min60
             );
 
             // Align to 15-minute slot: started 45 minutes ago
-            var startedAgo = utcNow.AddMinutes(-45);
+            var startedAgo = utcNow.AddMinutes(10);
             var roundedStart = new DateTimeOffset(
                 startedAgo.Year,
                 startedAgo.Month,
@@ -583,7 +587,7 @@ public class ApplicationDbContextInitialiser(
                 (int)repairTasksEndingNow.EstimatedDuration
             );
 
-            WorkOrder value = WorkOrder
+            var value = WorkOrder
                 .Create(
                     Guid.NewGuid(),
                     Guid.Parse(labor02.Id),
@@ -594,8 +598,9 @@ public class ApplicationDbContextInitialiser(
                     [repairTasksEndingNow],
                     DateTime.UtcNow
                 )
-                .Value;
-            var workOrderEndingNow = value;
+                ;
+            _logger.LogInformation("WorkOrderCreation IsError {IsError}, Error {Error}.", value.IsError, value.Errors!);
+            var workOrderEndingNow = value.Value;
 
             workOrderEndingNow.UpdateState(WorkOrderState.InProgress);
 

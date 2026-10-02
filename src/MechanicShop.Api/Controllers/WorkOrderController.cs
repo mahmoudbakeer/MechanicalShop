@@ -219,7 +219,7 @@ public class WorkOrderController(ISender sender) : ControllerApi
         );
     }
 
-    [HttpGet("schedule/{date}")]
+    [HttpGet("schedule/{date?}")]
     [Authorize(Policy = "ManagerOnly")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ScheduleDto), StatusCodes.Status200OK)]

@@ -1,6 +1,7 @@
 using System.Reflection;
 using FluentValidation;
 using MechanicShop.Application.Common.Behaviours;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MechanicShop.Application;
@@ -11,13 +12,16 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-            cfg.AddBehavior(typeof(ValidationBehavior<,>));
-            cfg.AddBehavior(typeof(PerformanceBehavior<,>));
-            cfg.AddBehavior(typeof(LoggingBehavior<>));
-            cfg.AddBehavior(typeof(CachingBehavior<,>));
-        });
+{
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    cfg.AddOpenBehavior(typeof(PerformanceBehavior<,>));
+    cfg.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
+    cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
+});
+
+
         return services;
     }
 }

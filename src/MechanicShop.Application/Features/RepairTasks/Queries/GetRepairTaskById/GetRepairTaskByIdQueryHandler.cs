@@ -5,6 +5,7 @@ using MechanicShop.Application.Features.RepairTasks.Mappers;
 using MechanicShop.Application.Features.RepairTasks.RepairTaskDtos;
 using MechanicShop.Domain.Common.Results;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MechanicShop.Application.Features.RepairTasks.Queries.GetRepairTaskById;
@@ -22,8 +23,8 @@ public sealed class GetRepairTaskByIdQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        var repairTask = await _context.RepairTasks.FindAsync(
-            keyValues: [request.Id],
+        var repairTask = await _context.RepairTasks.Include(rt => rt.Parts).FirstOrDefaultAsync(
+            rt => rt.Id == request.Id,
             cancellationToken
         );
 

@@ -12,5 +12,5 @@ public static class InvoiceError
     public static Error LinesItemEmpty => Error.Validation("Invoice_LinesItem_Invalid.", "LinesItems must contain at least one Item.");
     public static Error DiscountNegative => Error.Validation("Invoice_Discount_Negative.", "Discount cannot be negative.");
     public static Error DiscountExceedSubtotal => Error.Validation("Invoice_Discount_Exceed_SubTotal.", "Discount exceeded SubTotal.");
-    public static Error InvoiceLocked => Error.Validation("Invoice_Locked.", "Invoice Locked that might be because it's already paid or refunded.");
+    public static Error InvoiceLocked => Error.Conflict("Invoice_Locked.", "Invoice Locked that might be because it's already paid or refunded.");
 }

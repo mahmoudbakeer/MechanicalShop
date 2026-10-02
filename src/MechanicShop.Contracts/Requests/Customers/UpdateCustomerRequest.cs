@@ -15,5 +15,5 @@ public class UpdateVehicleRequest
     public string Make { get; set; } = default!;
     public string Model { get; set; } = default!;
     public int Year { get; set; }
-    public string LicensePlat { get; set; } = default!;
+    public string LicensePlate { get; set; } = default!;
 }

@@ -1,0 +1,200 @@
+@baseUrl = https://localhost:7007/api
+
+@Scheduled = 0
+@InProgress = 2
+@Completed = 1
+@Cancelled = 3
+
+@customerJohnId = F522BBE5-E3B1-4E2C-A8A3-C41550DCF39D
+@customerSarahId = 73A04DD3-C81A-4A54-9882-EF1017EB192D
+
+@labor01Id = b6327240-0aea-46fc-863a-777fc4e42560
+@labor02Id = 8104ab20-26c2-4651-b1de-c0baf04dbbd9
+@labor03Id = e17c83de-1089-4f19-bf79-5f789133d37f
+@labor04Id = 54cd01ba-b9ae-4c14-bab6-f3df0219ba4c
+
+@transmissionFluidChangeServiceId = CEE9B309-8620-4028-8D38-2532771AB3EA
+@sparkPlugReplacementServiceId = A8E9B4E0-8581-40DF-967D-51A0F4FABC0E
+@wheelAlignmentServiceId = E4C2B675-4A60-488F-A7B4-61966E7E80E3
+@engineDiagnosticServiceId = 90F2F3EF-3357-439E-9689-628AA08200C1
+@batteryReplacementServiceId = A770CC6E-0C8B-4AC5-9EE6-6928682BD47E
+@timingBeltReplacementServiceId = D124651E-CA72-467E-BA28-81EA4A2080BC
+@airConditioningRechargeServiceId = 1CB1608C-3BC7-4325-99C3-8244C0FB412F
+@oilChangeServiceId = 616AEBB1-D515-4B40-8D47-8D5C0B67A313
+@tireRotationServiceId = A376B5D1-6B2D-4DD8-883E-D3D1721C1316
+@brakeReplacementServiceId = 4FA0BE55-06F6-4616-B086-E1F0C9354CD8
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWE1OTEyOS02YzIwLTQxN2EtODM0ZC0xMWEyMDhkMzJkOTYiLCJlbWFpbCI6InBtQGxvY2FsaG9zdCIsInJvbGUiOiJNYW5hZ2VyIiwibmJmIjoxNzkwOTI4ODU2LCJleHAiOjE3OTA5MzI0NTYsImlhdCI6MTc5MDkyODg1NiwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0In0.ePMRcpb0QzAtu67gAje0yQtSf5cv7xTRZ5e1t_q-f_4
+@workorderId = 3a1848c1-0b30-43cd-908c-8f385c76b7c5
+@invoiceId = 2312467d-9ce4-4e25-a173-3fbef24a7e0a
+@repairTaskId = 98bb4772-c7d1-4915-aac2-b26dd214112e
+@customerId = a114aa78-a309-4113-9051-a2c945a6caa4
+@vehicleId = 76189ce7-1f2f-4bea-9d03-90dda460f082
+### Get OpenAPI document
+
+GET https://localhost:7007/openapi/v1.json
+
+### Get all customers
+GET {{baseUrl}}/v1/customers
+Authorization: Bearer {{token}}
+
+### Create a Customer
+PUT {{baseUrl}}/v1/Customers/a114aa78-a309-4113-9051-a2c945a6caa4
+Authorization: Bearer {{token}}
+Content-Type:  application/json
+
+{
+  "name": "string",
+  "email": "string@gmail.com",
+  "phoneNumber": "+917873686",
+  "vehicle": [
+    {
+      "id" : "76189ce7-1f2f-4bea-9d03-90dda460f082",
+      "make": "string",
+      "model": "string",
+      "year": 2000,
+      "licensePlat": "string"
+    }
+  ]
+}
+
+### DELETE a Customer 
+DELETE {{baseUrl}}/v1/Customers/{{customerId}}
+
+###
+DE
+### Get a customer
+GET {{baseUrl}}/v1/customers/{{customerJohnId}}
+Authorization: Bearer {{token}}
+
+### Get all labors
+GET {{baseUrl}}/v1/labors
+Authorization: Bearer {{token}}
+### Create RepairTask
+POST {{baseUrl}}/v1/repair-tasks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Something Replacement.",
+  "duration": 90,
+  "laborCost": 100,
+  "parts": [
+    {
+      "name": "Brake pads",
+      "cost": 80,
+      "quantity": 1
+    }
+  ]
+}
+
+### Update RepairTask
+PUT {{baseUrl}}/v1/repair-tasks/{{repairTaskId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Something Replacement.",
+  "duration": 90,
+  "laborCost": 100,
+  "parts": [
+    {
+        "id": "9184629b-e41f-442c-a7c1-388b5ae35090",
+      "name": "Brake pads",
+      "cost": 80,
+      "quantity": 1
+    }
+  ]
+}
+### Get all repair task
+GET {{baseUrl}}/v1/repair-tasks
+Authorization: Bearer {{token}}
+
+### Get a Repair task
+GET {{baseUrl}}/v1/repair-tasks/{{repairTaskId}}
+Authorization: Bearer {{token}}
+
+### Delete a Repair task
+DELETE  {{baseUrl}}/v1/repair-tasks/{{repairTaskId}}
+Authorization: Bearer {{token}}
+
+
+### Get all workorders
+GET {{baseUrl}}/v1/workorders
+Authorization: Bearer {{token}}
+
+
+### search workorders
+GET {{baseUrl}}/v1/workorders?page=1&pageSize=19&searchTerm=Comp&sortColumn=serviceId
+Authorization: Bearer {{token}}
+
+
+### Get workorder by Id 
+GET {{baseUrl}}/v1/workorders/{{workorderId}}
+Authorization: Bearer {{token}}
+
+### Create workorder
+POST {{baseUrl}}/v1/workorders/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "VehicleId": "13c80914-41ad-4d46-b7bb-60f6c89ad01e",
+  "RepairTaskIds": ["1cb1608c-3bc7-4325-99c3-8244c0fb412f"],
+  "laborId": "{{labor02Id}}",
+  "startAt": "2023-11-14T17:00:00Z",
+  "duration": "01:00:00",
+  "Spot" : 2
+}
+
+
+
+### Update workorder labor
+PUT {{baseUrl}}/v1/workorders/{{workorderId}}/labor
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "laborId": "{{labor01Id}}"
+}
+
+### Update workorder state
+PUT {{baseUrl}}/v1/workorders/{{workorderId}}/state
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "NewState": {{Completed}}
+}
+
+### delete workorder
+DELETE {{baseUrl}}/v1/workorders/{{workorderId}}
+Authorization: Bearer {{token}}
+
+### Invoice workorder
+POST {{baseUrl}}/v1/invoices/workorders/{{workorderId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{}
+
+### Get Invoice by Id 
+GET {{baseUrl}}/v1/invoices/{{invoiceId}}
+Authorization: Bearer {{token}}
+
+### Get Invoice in PDF
+GET {{baseUrl}}/v1/invoices/{{invoiceId}}/pdf
+Authorization: Bearer {{token}}
+
+### Pay Invoice 
+PUT https://localhost:7007/api/v1/invoices/{{invoiceId}}/payment
+Authorization: Bearer {{token}}
+
+### Get today schedule workorder
+GET {{baseUrl}}/v1/workorders/schedule/2026-10-14
+Authorization: Bearer {{token}}
+X-TimeZone :  Asia/Kolkata
+### Get specific day schedule workorder
+GET {{baseUrl}}/v1/workorders/schedule/2025-03-01?laborId=fdbe2dc3-7c0d-4a91-9f33-0a7c1a574f9e
+X-TimeZone: America/Montreal
+Authorization: Bearer {{token}}

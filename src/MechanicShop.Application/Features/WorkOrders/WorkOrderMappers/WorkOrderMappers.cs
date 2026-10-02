@@ -24,7 +24,7 @@ public static class WorkOrderMappers
                     Name = $"{workOrder.Employee.FirstName} {workOrder.Employee.LastName}",
                 },
             RepairTasks = workOrder.RepairTasks.ToDto(),
-            Vehicle = workOrder.Vehicle.ToDto(),
+            Vehicle = workOrder.Vehicle is null ? null : workOrder.Vehicle.ToDto(),
             State = workOrder.State,
             TotalPartsCost = workOrder
                 .RepairTasks.SelectMany(t => t.Parts)

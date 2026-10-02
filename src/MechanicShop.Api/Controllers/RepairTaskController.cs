@@ -17,30 +17,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MechanicShop.Api.Controllers;
 
-[Route("api/v{version:apiVersion}/repairtasks")]
+[Route("api/v{version:apiVersion}/repair-tasks")]
 [Authorize]
 public class RepairTaskController(ISender sender) : ControllerApi
 {
-    [HttpGet]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(typeof(PaginatedList<CustomerDto>), StatusCodes.Status200OK)]
-    [EndpointSummary("Retrieve a list RepairTasks.")]
-    [EndpointDescription(
-        "Returns list of RepairTasks and their details if exists with specific page and pageSize."
-    )]
-    [EndpointName("GetCustomers")]
-    [MapToApiVersion("1.0")]
-    public async Task<ActionResult<PaginatedList<CustomerDto>>> GetCustomers(
-        [FromQuery] PageRequest request,
-        CancellationToken ct
-    )
-    {
-        var result = await sender.Send(new GetCustomersQuery(request.Page, request.PageSize), ct);
 
-        return result.Match(Ok, Problem!);
-    }
 
     [HttpGet]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
